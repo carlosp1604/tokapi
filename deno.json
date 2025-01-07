@@ -1,0 +1,21 @@
+{
+  "tasks": {
+    "dev": "deno run --allow-read --allow-net --allow-env --watch --env-file=.env main.ts",
+    "start": "deno run --allow-read --allow-net --allow-env --env-file=.env main.ts"
+  },
+  "lint": {
+    "include": ["**/*.ts"],
+    "rules": {
+      "tags": ["recommended"]
+    }
+  },
+  "fmt": {
+    "include": ["**/*.ts"],
+    "semiColons": false,
+    "singleQuote": true,
+    "lineWidth": 126
+  },
+  "imports": {
+    "@types/express": "npm:@types/express@^4.17.21"
+  }
+}
