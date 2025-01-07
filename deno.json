@@ -16,6 +16,13 @@
     "lineWidth": 126
   },
   "imports": {
+    "@std/expect": "jsr:@std/expect@^1.0.10",
+    "@std/testing": "jsr:@std/testing@^1.0.8",
     "@types/express": "npm:@types/express@^4.17.21"
+  },
+  "test": {
+    "include": [
+      "__test__"
+    ]
   }
 }
