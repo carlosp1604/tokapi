@@ -1,0 +1,30 @@
+-- CreateTable
+CREATE TABLE `users` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(256) NOT NULL,
+    `username` VARCHAR(36) NOT NULL,
+    `email` VARCHAR(254) NOT NULL,
+    `image_url` VARCHAR(256) NULL,
+    `role` VARCHAR(16) NOT NULL,
+    `password` VARCHAR(60) NOT NULL,
+    `views_count` BIGINT NOT NULL DEFAULT 0,
+    `following` BIGINT NOT NULL DEFAULT 0,
+    `followers` BIGINT NOT NULL DEFAULT 0,
+    `public_likes` BOOLEAN NOT NULL DEFAULT true,
+    `public_saved` BOOLEAN NOT NULL DEFAULT true,
+    `public_shared` BOOLEAN NOT NULL DEFAULT true,
+    `public_profile` BOOLEAN NOT NULL DEFAULT true,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `deleted_at` DATETIME(3) NULL,
+
+    UNIQUE INDEX `users_username_key`(`username`),
+    UNIQUE INDEX `users_email_key`(`email`),
+    INDEX `users_name_idx`(`name`),
+    INDEX `users_name_created_at_idx`(`name`, `created_at` DESC),
+    INDEX `users_name_followers_idx`(`name`, `followers` DESC),
+    INDEX `users_username_created_at_idx`(`username`, `created_at` DESC),
+    INDEX `users_username_followers_idx`(`username`, `followers` DESC),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
