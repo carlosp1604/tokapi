@@ -1,0 +1,62 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "unused-imports"
+  ],
+  "extends": [
+    "standard",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@dword-design/import-alias/recommended"
+  ],
+  "rules": {
+    "padding-line-between-statements": [
+      2,
+      { "blankLine": "always", "prev": "import", "next": "*" },
+      { "blankLine": "never", "prev": "import", "next": "import" },
+      { "blankLine": "always", "prev": ["let", "const", "var"], "next": "*" },
+      { "blankLine": "any", "prev": ["let", "const", "var"], "next": ["let", "const", "var"] },
+      { "blankLine": "always", "prev": "*", "next": "return" }
+    ],
+    "comma-dangle": [
+      2,
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline"
+      }
+    ],
+    "max-len": [
+      2,
+      {
+        "code": 126
+      }
+    ],
+    "@typescript-eslint/consistent-type-definitions": [
+      2,
+      "interface"
+    ],
+    "@typescript-eslint/naming-convention": [
+      2,
+      {
+        "selector": "typeLike",
+        "format": ["PascalCase"]
+      }
+    ],
+    "prefer-arrow-callback": [2],
+    "@dword-design/import-alias/prefer-alias": [
+      "error",
+      {
+        "alias": {
+          "~/*": "./*"
+        }
+      }
+    ],
+    "unused-imports/no-unused-imports": 2,
+    "@typescript-eslint/no-unused-vars": "off",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+    ]
+  }
+}

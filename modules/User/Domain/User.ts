@@ -1,5 +1,3 @@
-import { DateTime } from 'luxon'
-
 export class User {
   public readonly id: string
   public readonly name: string
@@ -11,14 +9,14 @@ export class User {
   public readonly viewsCount: number
   public readonly following: number
   public readonly followers: number
-  public readonly publicLikes: number
-  public readonly publicSaved: number
-  public readonly publicShared: number
-  public readonly publicProfile: number
+  public readonly publicLikes: boolean
+  public readonly publicSaved: boolean
+  public readonly publicShared: boolean
+  public readonly publicProfile: boolean
   private password: string
-  public readonly createdAt: DateTime
-  public readonly updatedAt: DateTime
-  public readonly deletedAt: DateTime | null
+  public readonly createdAt: Date
+  public readonly updatedAt: Date
+  public readonly deletedAt: Date | null
 
   public constructor (
     id: string,
@@ -31,14 +29,14 @@ export class User {
     viewsCount: number,
     following: number,
     followers: number,
-    publicLikes: number,
-    publicSaved: number,
-    publicShared: number,
-    publicProfile: number,
+    publicLikes: boolean,
+    publicSaved: boolean,
+    publicShared: boolean,
+    publicProfile: boolean,
     hashedPassword: string,
-    createdAt: DateTime,
-    updatedAt: DateTime,
-    deletedAt: DateTime | null,
+    createdAt: Date,
+    updatedAt: Date,
+    deletedAt: Date | null
   ) {
     this.id = id
     this.name = name
@@ -60,4 +58,3 @@ export class User {
     this.deletedAt = deletedAt
   }
 }
-
