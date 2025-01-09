@@ -1,3 +1,7 @@
+import { EmailValidator } from '~/modules/Shared/Domain/Validator/EmailValidator.ts'
+import { UsernameValidator } from '~/modules/Shared/Domain/Validator/UsernameValidator.ts'
+import { UserDomainException } from '~/modules/User/Domain/UserDomainException.ts'
+
 export class User {
   public readonly id: string
   public readonly name: string
@@ -38,6 +42,17 @@ export class User {
     updatedAt: Date,
     deletedAt: Date | null
   ) {
+    const isEmailValid = new EmailValidator().validate(email)
+    const isUsernameValid = new UsernameValidator().validate(email)
+
+    if (!isEmailValid) {
+      throw UserDomainException.invalidEmail(email)
+    }
+
+    if (!isUsernameValid) {
+      throw UserDomainException.invalidUsername(username)
+    }
+
     this.id = id
     this.name = name
     this.description = description
