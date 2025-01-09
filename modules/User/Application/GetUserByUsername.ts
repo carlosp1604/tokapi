@@ -4,12 +4,19 @@ import { UserApplicationDto } from '~/modules/User/Application/Dtos/UserApplicat
 import { GetUserByUsernameApplicationException } from '~/modules/User/Application/GetUserByUsernameApplicationException.ts'
 import { Result } from '~/modules/Shared/Domain/Result.ts'
 import { UserApplicationDtoTranslator } from '~/modules/User/Application/Translators/UserApplicationDtoTranslator.ts'
+import { UsernameValidator } from '~/modules/Shared/Domain/Validator/UsernameValidator.ts'
 
 export class GetUserByUsername {
   // eslint-disable-next-line no-useless-constructor
   public constructor (private userRepository: UserRepositoryInterface) {}
 
   public async get (username: User['username']): Promise<Result<UserApplicationDto, GetUserByUsernameApplicationException>> {
+    const validUsername = (new UsernameValidator()).validate(username)
+
+    if (!validUsername) {
+      return { success: false, error: GetUserByUsernameApplicationException.invalidUsername(username) }
+    }
+
     const user = await this.userRepository.findByUsername(username)
 
     if (!user) {

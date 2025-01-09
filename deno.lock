@@ -1,10 +1,19 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@std/assert@^1.0.10": "1.0.10",
+    "jsr:@std/async@^1.0.9": "1.0.9",
+    "jsr:@std/data-structures@^1.0.5": "1.0.5",
+    "jsr:@std/expect@^1.0.10": "1.0.10",
+    "jsr:@std/fs@^1.0.8": "1.0.8",
+    "jsr:@std/internal@^1.0.5": "1.0.5",
+    "jsr:@std/path@^1.0.8": "1.0.8",
+    "jsr:@std/testing@^1.0.8": "1.0.8",
     "npm:@dword-design/eslint-plugin-import-alias@^5.1.1": "5.1.1",
     "npm:@jest/globals@^29.7.0": "29.7.0",
     "npm:@prisma/client@^6.2.1": "6.2.1_prisma@6.2.1",
     "npm:@types/express@^4.17.21": "4.17.21",
+    "npm:@types/jest@^29.5.14": "29.5.14",
     "npm:@types/luxon@^3.4.2": "3.4.2",
     "npm:@typescript-eslint/eslint-plugin@^8.19.1": "8.19.1_@typescript-eslint+parser@8.19.1__eslint@8.57.1__typescript@5.7.2_eslint@8.57.1_typescript@5.7.2",
     "npm:@typescript-eslint/parser@^8.19.1": "8.19.1_eslint@8.57.1_typescript@5.7.2",
@@ -18,11 +27,56 @@
     "npm:eslint@8.57.1": "8.57.1",
     "npm:express-validator@^7.2.1": "7.2.1",
     "npm:express@4.18.2": "4.18.2",
+    "npm:jest-mock-extended@^4.0.0-beta1": "4.0.0-beta1_@jest+globals@29.7.0_jest@29.7.0_typescript@5.7.2",
     "npm:jest@*": "29.7.0",
     "npm:jest@^29.7.0": "29.7.0",
     "npm:luxon@^3.5.0": "3.5.0",
     "npm:prisma@^6.2.1": "6.2.1",
     "npm:ts-jest@^29.2.5": "29.2.5_jest@29.7.0_typescript@5.7.2"
+  },
+  "jsr": {
+    "@std/assert@1.0.10": {
+      "integrity": "59b5cbac5bd55459a19045d95cc7c2ff787b4f8527c0dd195078ff6f9481fbb3",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/async@1.0.9": {
+      "integrity": "c6472fd0623b3f3daae023cdf7ca5535e1b721dfbf376562c0c12b3fb4867f91"
+    },
+    "@std/data-structures@1.0.5": {
+      "integrity": "86dd5c2d6365a6ad56e9103b3a877c5d5ade238c68ae463acfe0eb0e56d40783"
+    },
+    "@std/expect@1.0.10": {
+      "integrity": "7659b640447887cd1735f866962e10e434f12443b13595b149970c806e6f08db",
+      "dependencies": [
+        "jsr:@std/assert",
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/fs@1.0.8": {
+      "integrity": "161c721b6f9400b8100a851b6f4061431c538b204bb76c501d02c508995cffe0",
+      "dependencies": [
+        "jsr:@std/path"
+      ]
+    },
+    "@std/internal@1.0.5": {
+      "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
+    },
+    "@std/path@1.0.8": {
+      "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
+    },
+    "@std/testing@1.0.8": {
+      "integrity": "ceef535808fb7568e91b0f8263599bd29b1c5603ffb0377227f00a8ca9fe42a2",
+      "dependencies": [
+        "jsr:@std/assert",
+        "jsr:@std/async",
+        "jsr:@std/data-structures",
+        "jsr:@std/fs",
+        "jsr:@std/internal",
+        "jsr:@std/path"
+      ]
+    }
   },
   "npm": {
     "@ampproject/remapping@2.3.0": {
@@ -714,6 +768,13 @@
       "integrity": "sha512-pk2B1NWalF9toCRu6gjBzR69syFjP4Od8WRAX+0mmf9lAjCRicLOWc+ZrxZHx/0XRjotgkF9t6iaMJ+aXcOdZQ==",
       "dependencies": [
         "@types/istanbul-lib-report"
+      ]
+    },
+    "@types/jest@29.5.14": {
+      "integrity": "sha512-ZN+4sdnLUbo8EVvVc2ao0GFW6oVrQRPn4K2lglySj7APvSrgzxHiNNK99us4WDMi57xxA2yggblIAMNhXOotLQ==",
+      "dependencies": [
+        "expect",
+        "pretty-format"
       ]
     },
     "@types/json5@0.0.29": {
@@ -2500,6 +2561,15 @@
         "stack-utils"
       ]
     },
+    "jest-mock-extended@4.0.0-beta1_@jest+globals@29.7.0_jest@29.7.0_typescript@5.7.2": {
+      "integrity": "sha512-MYcI0wQu3ceNhqKoqAJOdEfsVMamAFqDTjoLN5Y45PAG3iIm4WGnhOu0wpMjlWCexVPO71PMoNir9QrGXrnIlw==",
+      "dependencies": [
+        "@jest/globals",
+        "jest",
+        "ts-essentials",
+        "typescript"
+      ]
+    },
     "jest-mock@29.7.0": {
       "integrity": "sha512-ITOMZn+UkYS4ZFh83xYAOzWStloNzJFO2s8DWrE4lhtGD+AorgnbkiKERe4wQVBydIGPx059g6riW5Btp6Llnw==",
       "dependencies": [
@@ -3508,6 +3578,12 @@
         "typescript"
       ]
     },
+    "ts-essentials@10.0.4_typescript@5.7.2": {
+      "integrity": "sha512-lwYdz28+S4nicm+jFi6V58LaAIpxzhg9rLdgNC1VsdP/xiFBseGhF1M/shwCk6zMmwahBZdXcl34LVHrEang3A==",
+      "dependencies": [
+        "typescript"
+      ]
+    },
     "ts-jest@29.2.5_jest@29.7.0_typescript@5.7.2": {
       "integrity": "sha512-KD8zB2aAZrcKIdGk4OwpJggeLcH1FgrICqDSROWqlnJXGCXK4Mn6FcdK2B6670Xr73lHMG1kHw8R87A0ecZ+vA==",
       "dependencies": [
@@ -3768,6 +3844,7 @@
         "npm:@dword-design/eslint-plugin-import-alias@^5.1.1",
         "npm:@jest/globals@^29.7.0",
         "npm:@prisma/client@^6.2.1",
+        "npm:@types/jest@^29.5.14",
         "npm:@types/luxon@^3.4.2",
         "npm:@typescript-eslint/eslint-plugin@^8.19.1",
         "npm:@typescript-eslint/parser@^8.19.1",
@@ -3779,6 +3856,7 @@
         "npm:eslint-plugin-unused-imports@^4.1.4",
         "npm:eslint@8.57.1",
         "npm:express-validator@^7.2.1",
+        "npm:jest-mock-extended@^4.0.0-beta1",
         "npm:jest@^29.7.0",
         "npm:luxon@^3.5.0",
         "npm:prisma@^6.2.1",

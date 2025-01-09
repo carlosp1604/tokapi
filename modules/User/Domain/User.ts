@@ -42,8 +42,8 @@ export class User {
     updatedAt: Date,
     deletedAt: Date | null
   ) {
-    const isEmailValid = new EmailValidator().validate(email)
-    const isUsernameValid = new UsernameValidator().validate(email)
+    const isEmailValid = (new EmailValidator()).validate(email)
+    const isUsernameValid = (new UsernameValidator()).validate(username)
 
     if (!isEmailValid) {
       throw UserDomainException.invalidEmail(email)
