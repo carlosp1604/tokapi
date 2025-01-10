@@ -17,7 +17,7 @@ export class User {
   public readonly publicSaved: boolean
   public readonly publicShared: boolean
   public readonly publicProfile: boolean
-  private password: string
+  public readonly password: string
   public readonly createdAt: Date
   public readonly updatedAt: Date
   public readonly deletedAt: Date | null
