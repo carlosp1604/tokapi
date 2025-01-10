@@ -43,3 +43,18 @@ model User {
 
   @@map("users")
 }
+
+model VerificationToken {
+  id                String             @id
+  token             String             @db.VarChar(16)
+  email             String             @db.VarChar(254)
+  type              String             @db.VarChar(16)
+  expiresAt         DateTime           @map("expires_at")
+  createdAt         DateTime           @map("created_at") @default(now())
+  updatedAt         DateTime           @map("updated_at") @default(now())
+  usedAt            DateTime?          @map("used_at")
+
+  @@index([email, type, expiresAt, usedAt])
+
+  @@map("verification_tokens")
+}
