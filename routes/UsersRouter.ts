@@ -5,6 +5,9 @@ import { GetUserByUsernameController } from '~/modules/User/Application/GetUserB
 
 const usersRouter = express.Router()
 
-usersRouter.get('/:username', param('username').exists().isString().notEmpty(), GetUserByUsernameController.get)
+usersRouter.get(
+  '/:username',
+  param('username').exists().isString().notEmpty(),
+  async (req: express.Request, res: express.Response) => { await (new GetUserByUsernameController().get(req, res)) })
 
 export default usersRouter

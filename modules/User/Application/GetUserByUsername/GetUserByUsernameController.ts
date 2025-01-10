@@ -5,37 +5,51 @@ import { GetUserByUsername } from '~/modules/User/Application/GetUserByUsername/
 import {
   GetUserByUsernameApplicationException
 } from '~/modules/User/Application/GetUserByUsername/GetUserByUsernameApplicationException.ts'
+import {
+  BAD_REQUEST_USERNAME_REQUIRED,
+  INVALID_USERNAME_PARAM, SERVER_ERROR, USER_NOT_FOUND
+} from '~/modules/User/Infrastructure/Api/ApiExceptionCodes.ts'
 
 export class GetUserByUsernameController {
-  public static async get (request: Request, response: Response) {
+  public async get (request: Request, response: Response) {
     const result = validationResult(request)
 
     if (!result.isEmpty()) {
-      response.status(400).send({ errors: result.array() })
-
-      return
+      return response.status(400).send({
+        code: BAD_REQUEST_USERNAME_REQUIRED,
+        message: 'Param username is required and must be a string',
+        errors: result.array(),
+      })
     }
 
     const useCase = container.resolve<GetUserByUsername>('getUserByUsername')
-
     const getUserResult = await useCase.get(request.params.username)
 
     if (!getUserResult.success) {
-      // TODO: Define and Improve responses type
-      if (getUserResult.error.id === GetUserByUsernameApplicationException.invalidUsernameId) {
-        response.status(422).send('Invalid provided username')
-      } else {
-        response.status(404).send('User not found')
-      }
-
-      return
+      return this.handleErrors(getUserResult.error, response)
     }
 
-    // TODO: Define and Improve responses type
-    response.status(200).json({
-      message: 'User found',
-      status: 'success',
-      data: getUserResult.value,
+    return response.status(200).json(getUserResult.value)
+  }
+
+  private handleErrors (error: GetUserByUsernameApplicationException, response: Response) {
+    if (error.id === GetUserByUsernameApplicationException.invalidUsernameId) {
+      return response.status(422).send({
+        code: INVALID_USERNAME_PARAM,
+        message: error.message,
+      })
+    }
+
+    if (error.id === GetUserByUsernameApplicationException.userNotFoundId) {
+      return response.status(404).send({
+        code: USER_NOT_FOUND,
+        message: error.message,
+      })
+    }
+
+    return response.status(500).send({
+      code: SERVER_ERROR,
+      message: 'Something went wrong while processing request',
     })
   }
 }
