@@ -14,3 +14,32 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id                String             @id
+  name              String
+  description       String             @db.VarChar(256)
+  username          String             @unique @db.VarChar(36)
+  email             String             @unique @db.VarChar(254)
+  imageUrl          String?            @map("image_url") @db.VarChar(256)
+  role              String             @db.VarChar(16)
+  password          String             @db.VarChar(60)
+  viewsCount        BigInt             @map("views_count")  @default(0)
+  following         BigInt             @map("following")    @default(0)
+  followers         BigInt             @map("followers")    @default(0)
+  publicLikes       Boolean            @map("public_likes")   @default(true)
+  publicSaved       Boolean            @map("public_saved")   @default(true)
+  publicShared      Boolean            @map("public_shared")  @default(true)
+  publicProfile     Boolean            @map("public_profile") @default(true)
+  createdAt         DateTime           @map("created_at") @default(now())
+  updatedAt         DateTime           @map("updated_at") @default(now())
+  deletedAt         DateTime?          @map("deleted_at")
+
+  @@index([name])
+  @@index([name, createdAt(sort: Desc)])
+  @@index([name, followers(sort: Desc)])
+  @@index([username, createdAt(sort: Desc)])
+  @@index([username, followers(sort: Desc)])
+
+  @@map("users")
+}

@@ -1,14 +1,16 @@
 {
   "tasks": {
-    "dev": "deno run --allow-read --allow-ffi --allow-net --allow-env --watch --env-file=.env main.ts",
-    "start": "deno run --allow-read --allow-ffi --allow-net --allow-env --env-file=.env main.ts",
+    "dev": "deno run --allow-read --allow-ffi --allow-sys --allow-net --allow-env --watch --env-file=.env main.ts",
+    "start": "deno run --allow-read --allow-ffi ---allow-sys -allow-net --allow-env --env-file=.env main.ts",
+    "lint": "deno run -A npm:eslint .",
+    "test": "deno run -A --unstable npm:jest",
     "db:up": "sudo docker compose up -d",
     "db:migrate": "deno run -A npm:prisma migrate dev --name",
     "prisma:generate": "deno run -A --unstable npm:prisma generate"
   },
   "lint": {
     "include": ["**/*.ts"],
-    "exclude": ["node_modules"],
+    "exclude": ["node_modules", "__test__"],
     "rules": {
       "tags": ["recommended"]
     }
@@ -20,6 +22,8 @@
     "lineWidth": 126
   },
   "imports": {
+    "~/": "./",
+    "./": "./",
     "@std/expect": "jsr:@std/expect@^1.0.10",
     "@std/path": "jsr:@std/path@^1.0.8",
     "@std/testing": "jsr:@std/testing@^1.0.8",
