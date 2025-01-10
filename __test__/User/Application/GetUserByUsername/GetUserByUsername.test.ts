@@ -1,11 +1,11 @@
 import { beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { UserRepositoryInterface } from '~/modules/User/Domain/UserRepositoryInterface.ts'
 import { mock, mockReset } from 'jest-mock-extended'
-import { GetUserByUsername } from '~/modules/User/Application/GetUserByUsername.ts'
+import { GetUserByUsername } from '~/modules/User/Application/GetUserByUsername/GetUserByUsername.ts'
 import { User } from '~/modules/User/Domain/User.ts'
 import {
   GetUserByUsernameApplicationException
-} from '~/modules/User/Application/GetUserByUsernameApplicationException.ts'
+} from '~/modules/User/Application/GetUserByUsername/GetUserByUsernameApplicationException.ts'
 import { UsernameValidator } from '~/modules/Shared/Domain/Validator/UsernameValidator.ts'
 import { EmailValidator } from '~/modules/Shared/Domain/Validator/EmailValidator.ts'
 

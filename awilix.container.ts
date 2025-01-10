@@ -1,6 +1,6 @@
 import { asClass, createContainer, InjectionMode } from 'awilix'
 import { MysqlUserRepository } from '~/modules/User/Infrastructure/MysqlUserRepository.ts'
-import { GetUserByUsername } from '~/modules/User/Application/GetUserByUsername.ts'
+import { GetUserByUsername } from '~/modules/User/Application/GetUserByUsername/GetUserByUsername.ts'
 
 /**
  * We create a container to register our classes dependencies

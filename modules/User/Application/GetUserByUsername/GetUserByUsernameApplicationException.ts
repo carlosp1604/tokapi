@@ -1,5 +1,5 @@
 import { ApplicationException } from '~/modules/Exception/Application/ApplicationException.ts'
-import { User } from '../Domain/User.ts'
+import { User } from '~/modules/User/Domain/User.ts'
 
 export class GetUserByUsernameApplicationException extends ApplicationException {
   public static userNotFoundId = 'get_user_by_username_user_not_found'
