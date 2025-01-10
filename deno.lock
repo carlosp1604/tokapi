@@ -31,6 +31,7 @@
     "npm:jest@*": "29.7.0",
     "npm:jest@^29.7.0": "29.7.0",
     "npm:luxon@^3.5.0": "3.5.0",
+    "npm:prisma@*": "6.2.1",
     "npm:prisma@^6.2.1": "6.2.1",
     "npm:supertest@7": "7.0.0",
     "npm:ts-jest@^29.2.5": "29.2.5_jest@29.7.0_typescript@5.7.2"
