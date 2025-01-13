@@ -4,8 +4,8 @@ import { mock, mockReset } from 'jest-mock-extended'
 import { GetUserByUsername } from '~/modules/User/Application/GetUserByUsername/GetUserByUsername.ts'
 import { User } from '~/modules/User/Domain/User.ts'
 import {
-  GetUserByUsernameApplicationException
-} from '~/modules/User/Application/GetUserByUsername/GetUserByUsernameApplicationException.ts'
+  GetUserByUsernameApplicationError
+} from '~/modules/User/Application/GetUserByUsername/GetUserByUsernameApplicationError.ts'
 import { UsernameValidator } from '~/modules/Shared/Domain/Validator/UsernameValidator.ts'
 import { EmailValidator } from '~/modules/Shared/Domain/Validator/EmailValidator.ts'
 
@@ -31,7 +31,7 @@ describe('GetUserByUsername', () => {
       'test_username',
       'test@email.com',
       null,
-      'User',
+      'user',
       0,
       0,
       0,
@@ -94,7 +94,7 @@ describe('GetUserByUsername', () => {
           publicSaved: true,
           publicShared: true,
           publicProfile: true,
-          role: 'User',
+          role: 'user',
           createdAt: nowDate.toISOString(),
           updatedAt: nowDate.toISOString(),
         },
@@ -116,7 +116,7 @@ describe('GetUserByUsername', () => {
 
       expect(response).toStrictEqual({
         success: false,
-        error: GetUserByUsernameApplicationException.invalidUsername('invalid-username'),
+        error: GetUserByUsernameApplicationError.invalidUsername('invalid-username'),
       })
     })
 
@@ -132,7 +132,7 @@ describe('GetUserByUsername', () => {
 
       expect(response).toStrictEqual({
         success: false,
-        error: GetUserByUsernameApplicationException.userNotFound('valid_username'),
+        error: GetUserByUsernameApplicationError.userNotFound('valid_username'),
       })
     })
   })

@@ -1,6 +1,18 @@
 import { EmailValidator } from '~/modules/Shared/Domain/Validator/EmailValidator.ts'
 import { UsernameValidator } from '~/modules/Shared/Domain/Validator/UsernameValidator.ts'
 import { UserDomainException } from '~/modules/User/Domain/UserDomainException.ts'
+import { randomUUID } from 'node:crypto'
+import { PasswordValidator } from '~/modules/Shared/Domain/Validator/PasswordValidator.ts'
+import { CryptoServiceInterface } from '~/modules/Shared/Domain/CryptoServiceInterface.ts'
+import { Result } from '~/modules/Shared/Domain/Result.ts'
+import { UserDomainError } from '~/modules/User/Domain/UserDomainError.ts'
+
+enum UserRole {
+  USER = 'user',
+  ADMIN = 'admin',
+  MODERATOR = 'moderator',
+  VERIFIED = 'verified',
+}
 
 export class User {
   public readonly id: string
@@ -9,7 +21,7 @@ export class User {
   public readonly username: string
   public readonly email: string
   public readonly imageUrl: string | null
-  public readonly role: string
+  public readonly role: UserRole
   public readonly viewsCount: number
   public readonly following: number
   public readonly followers: number
@@ -45,6 +57,10 @@ export class User {
     const isEmailValid = (new EmailValidator()).validate(email)
     const isUsernameValid = (new UsernameValidator()).validate(username)
 
+    if (!isEmailValid && !isUsernameValid) {
+      throw UserDomainException.invalidUsernameAndEmail(username, email)
+    }
+
     if (!isEmailValid) {
       throw UserDomainException.invalidEmail(email)
     }
@@ -60,7 +76,7 @@ export class User {
     this.username = username
     this.imageUrl = imageUrl
     this.password = hashedPassword
-    this.role = role
+    this.role = this.validateUserRole(role)
     this.viewsCount = viewsCount
     this.following = following
     this.followers = followers
@@ -71,5 +87,62 @@ export class User {
     this.createdAt = createdAt
     this.updatedAt = updatedAt
     this.deletedAt = deletedAt
+  }
+
+  private validateUserRole (userRole: string): UserRole {
+    if (!Object.values(UserRole).find(value => userRole === value)) {
+      throw UserDomainException.invalidRole(userRole)
+    }
+
+    return userRole as UserRole
+  }
+
+  public static async initializeUser (
+    name: string,
+    email: string,
+    username: string,
+    password: string,
+    cryptoService: CryptoServiceInterface
+  ): Promise<Result<User, UserDomainError>> {
+    const isPasswordValid = (new PasswordValidator().validate(password))
+
+    if (!isPasswordValid) {
+      return { success: false, error: UserDomainError.invalidPassword(password) }
+    }
+
+    const hashedPassword = await cryptoService.hash(password)
+    const userUuid = randomUUID()
+    const nowDate = new Date()
+
+    try {
+      const user = new User(
+        userUuid,
+        name,
+        '',
+        username,
+        email,
+        null,
+        UserRole.USER,
+        0,
+        0,
+        0,
+        false,
+        false,
+        false,
+        true,
+        hashedPassword,
+        nowDate,
+        nowDate,
+        nowDate
+      )
+
+      return { success: true, value: user }
+    } catch (exception: unknown) {
+      if (!(exception instanceof UserDomainException)) {
+        throw exception
+      }
+
+      return { success: false, error: exception }
+    }
   }
 }

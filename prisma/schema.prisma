@@ -54,7 +54,7 @@ model VerificationToken {
   updatedAt         DateTime           @map("updated_at") @default(now())
   usedAt            DateTime?          @map("used_at")
 
-  @@index([email, type, expiresAt, usedAt])
+  @@index([email, type, createdAt])
 
   @@map("verification_tokens")
 }

@@ -1,11 +1,11 @@
 import { VerificationToken as PrismaVerificationTokenModel } from '@prisma/client'
 import { VerificationToken } from '~/modules/User/Domain/VerificationToken.ts'
 
-export class PrismaUserModelTranslator {
+export class PrismaVerificationTokenModelTranslator {
   public static toDomain (prismaVerificationTokenModel: PrismaVerificationTokenModel) {
     let usedAt: Date | null = null
 
-    if (prismaVerificationTokenModel.deletedAt !== null) {
+    if (prismaVerificationTokenModel.usedAt !== null) {
       usedAt = prismaVerificationTokenModel.usedAt
     }
 
@@ -27,7 +27,7 @@ export class PrismaUserModelTranslator {
       token: domain.token,
       email: domain.email,
       type: domain.type,
-      expiresAt: domain.type,
+      expiresAt: domain.expiresAt,
       createdAt: domain.createdAt,
       updatedAt: domain.updatedAt,
       usedAt: domain.usedAt,

@@ -1,7 +1,7 @@
-import { ApplicationException } from '~/modules/Exception/Application/ApplicationException.ts'
 import { User } from '~/modules/User/Domain/User.ts'
+import { ApplicationError } from '~/modules/Error/Application/ApplicationError.ts'
 
-export class GetUserByUsernameApplicationException extends ApplicationException {
+export class GetUserByUsernameApplicationError extends ApplicationError {
   public static userNotFoundId = 'get_user_by_username_user_not_found'
   public static invalidUsernameId = 'get_user_by_username_invalid_username'
 
@@ -10,15 +10,15 @@ export class GetUserByUsernameApplicationException extends ApplicationException 
     super(id, message)
   }
 
-  public static userNotFound (username: User['username']): GetUserByUsernameApplicationException {
-    return new GetUserByUsernameApplicationException(
+  public static userNotFound (username: User['username']): GetUserByUsernameApplicationError {
+    return new GetUserByUsernameApplicationError(
       `User with username ${username} not found`,
       this.userNotFoundId
     )
   }
 
-  public static invalidUsername (username: User['username']): GetUserByUsernameApplicationException {
-    return new GetUserByUsernameApplicationException(
+  public static invalidUsername (username: User['username']): GetUserByUsernameApplicationError {
+    return new GetUserByUsernameApplicationError(
       `Username ${username} is not valid`,
       this.invalidUsernameId
     )
