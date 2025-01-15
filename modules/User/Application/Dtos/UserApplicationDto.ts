@@ -1,7 +1,7 @@
 export interface UserApplicationDto {
   id: string
   name: string
-  description: string
+  description: string | null
   username: string
   email: string
   imageUrl: string | null

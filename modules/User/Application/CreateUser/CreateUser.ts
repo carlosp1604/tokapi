@@ -1,14 +1,15 @@
 import { User } from '~/modules/User/Domain/User.ts'
 import { Result } from '~/modules/Shared/Domain/Result.ts'
-import { VerificationToken } from '~/modules/User/Domain/VerificationToken.ts'
-import { UserDomainException } from '~/modules/User/Domain/UserDomainException.ts'
 import { CryptoServiceInterface } from '~/modules/Shared/Domain/CryptoServiceInterface.ts'
 import { UserRepositoryInterface } from '~/modules/User/Domain/UserRepositoryInterface.ts'
+import { CreateUserApplicationRequestDto } from '~/modules/User/Application/CreateUser/CreateUserApplicationRequestDto.ts'
 import {
-  CreateUserApplicationRequestDto
-} from '~/modules/User/Application/CreateUser/CreateUserApplicationRequestDto.ts'
-import { CreateUserApplicationError } from '~/modules/User/Application/CreateUser/CreateUserApplicationError.ts'
+  CreateUserApplicationError,
+  CreateUserError,
+  ErrorType
+} from '~/modules/User/Application/CreateUser/CreateUserApplicationError.ts'
 import { UserDomainError } from '~/modules/User/Domain/UserDomainError.ts'
+import { VerificationTokenTypes } from '~/modules/Shared/Domain/ValueObject/VerificationTokenType.ts'
 
 export class CreateUser {
   // eslint-disable-next-line no-useless-constructor
@@ -20,55 +21,29 @@ export class CreateUser {
   public async create (
     createUserApplicationRequestDto: CreateUserApplicationRequestDto
   ): Promise<Result<void, CreateUserApplicationError>> {
-    // 2. Check user exists. User cannot exist
     const [existsEmail, existsUsername] = await Promise.all([
       this.userRepository.existsByEmail(createUserApplicationRequestDto.email),
       this.userRepository.existsByUsername(createUserApplicationRequestDto.username),
     ])
 
-    if (existsEmail && existsUsername) {
-      return {
-        success: false,
-        error: CreateUserApplicationError.usernameAndEmailAlreadyRegistered(
-          createUserApplicationRequestDto.username,
-          createUserApplicationRequestDto.email
-        ),
-      }
+    if (existsEmail || existsUsername) {
+      return { success: false, error: this.handleDuplicated(createUserApplicationRequestDto, existsEmail, existsUsername) }
     }
 
-    if (existsEmail) {
-      return {
-        success: false,
-        error: CreateUserApplicationError.emailAlreadyRegistered(createUserApplicationRequestDto.email),
-      }
+    const verificationToken = await this.userRepository.findCreateAccountToken(createUserApplicationRequestDto.email)
+
+    if (!verificationToken) {
+      return { success: false, error: new CreateUserApplicationError(ErrorType.NOT_FOUND, [CreateUserError.invalidToken()]) }
     }
 
-    if (existsUsername) {
-      return {
-        success: false,
-        error: CreateUserApplicationError.usernameAlreadyRegistered(createUserApplicationRequestDto.username),
-      }
-    }
+    const useTokenResult = verificationToken.useTokenFor(
+      createUserApplicationRequestDto.token,
+      VerificationTokenTypes.CREATE_ACCOUNT
+    )
 
-    // 3. Check token
-    const token = await this.userRepository.findCreateAccountToken(createUserApplicationRequestDto.email)
-
-    if (!token) {
-      return {
-        success: false,
-        error: CreateUserApplicationError.invalidToken(),
-      }
-    }
-
-    // TODO: Return different error
-    const validToken =
-      VerificationToken.validateVerificationTokenForCreateAccount(token, createUserApplicationRequestDto.token)
-
-    if (!validToken) {
-      return {
-        success: false,
-        error: CreateUserApplicationError.invalidToken(),
-      }
+    if (!useTokenResult.success) {
+      // Error obfuscating
+      return { success: false, error: new CreateUserApplicationError(ErrorType.NOT_FOUND, [CreateUserError.invalidToken()]) }
     }
 
     const buildUserResult = await User.initializeUser(
@@ -80,47 +55,77 @@ export class CreateUser {
     )
 
     if (!buildUserResult.success) {
-      if (buildUserResult.error.id === UserDomainError.invalidPasswordId) {
-        return { success: false, error: CreateUserApplicationError.invalidPassword(createUserApplicationRequestDto.password) }
+      // FIXME: Workaround to test this use-case (property error does not exists on type)
+      let errors: UserDomainError[] = []
+
+      if ('error' in buildUserResult) {
+        errors = buildUserResult.error
       }
 
-      if (buildUserResult.error.id === UserDomainException.invalidUsernameAndEmailId) {
-        return {
-          success: false,
-          error: CreateUserApplicationError.invalidUsernameAndEmail(
-            createUserApplicationRequestDto.username, createUserApplicationRequestDto.email
-          ),
-        }
-      }
+      const buildUserErrors =
+        this.handleUserBuildingErrors(createUserApplicationRequestDto, errors)
 
-      if (buildUserResult.error.id === UserDomainException.invalidEmailId) {
-        return {
-          success: false,
-          error: CreateUserApplicationError.invalidEmail(createUserApplicationRequestDto.email),
-        }
-      }
-
-      if (buildUserResult.error.id === UserDomainException.invalidUsernameId) {
-        return {
-          success: false,
-          error: CreateUserApplicationError.invalidUsername(createUserApplicationRequestDto.username),
-        }
-      }
-
-      return { success: false, error: CreateUserApplicationError.cannotCreateUser() }
+      return { success: false, error: buildUserErrors }
     }
 
     try {
-      // save user and mark token as used
-
-      token.markAsUsed()
-      await this.userRepository.createUser(buildUserResult.value, token)
+      await this.userRepository.createUser(buildUserResult.value, verificationToken)
 
       return { success: true, value: undefined }
     } catch (exception: unknown) {
       console.log(exception)
 
-      return { success: false, error: CreateUserApplicationError.cannotCreateUser() }
+      return {
+        success: false,
+        error: new CreateUserApplicationError(ErrorType.UNEXPECTED_ERROR, [CreateUserError.cannotCreateUser()]),
+      }
     }
+  }
+
+  private handleDuplicated (
+    createUserApplicationRequestDto: CreateUserApplicationRequestDto,
+    existsEmail: boolean,
+    existsUsername: boolean
+  ): CreateUserApplicationError {
+    const errors: CreateUserError[] = []
+
+    if (existsUsername) {
+      errors.push(CreateUserError.usernameAlreadyRegistered(createUserApplicationRequestDto.username))
+    }
+
+    if (existsEmail) {
+      errors.push(CreateUserError.emailAlreadyRegistered(createUserApplicationRequestDto.email))
+    }
+
+    return new CreateUserApplicationError(ErrorType.DUPLICATED, errors)
+  }
+
+  private handleUserBuildingErrors (
+    createUserApplicationRequestDto: CreateUserApplicationRequestDto,
+    errors: UserDomainError[]
+  ): CreateUserApplicationError {
+    const createUserErrors: CreateUserError[] = []
+
+    for (const error of errors) {
+      switch (error.id) {
+        case UserDomainError.invalidPasswordId:
+          createUserErrors.push(CreateUserError.invalidPassword(createUserApplicationRequestDto.password))
+          break
+
+        case UserDomainError.invalidEmailId:
+          createUserErrors.push(CreateUserError.invalidEmail(createUserApplicationRequestDto.email))
+          break
+
+        case UserDomainError.invalidNameId:
+          createUserErrors.push(CreateUserError.invalidName(createUserApplicationRequestDto.name))
+          break
+
+        case UserDomainError.invalidUsernameId:
+          createUserErrors.push(CreateUserError.invalidUsername(createUserApplicationRequestDto.username))
+          break
+      }
+    }
+
+    return new CreateUserApplicationError(ErrorType.VALIDATION, createUserErrors)
   }
 }

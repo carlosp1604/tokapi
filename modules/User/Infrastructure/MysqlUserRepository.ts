@@ -2,10 +2,11 @@ import { UserRepositoryInterface } from '~/modules/User/Domain/UserRepositoryInt
 import { User } from '~/modules/User/Domain/User.ts'
 import { prisma } from '~/persistence/prisma.ts'
 import { PrismaUserModelTranslator } from '~/modules/User/Infrastructure/PrismaUserModelTranslator.ts'
-import { VerificationToken, VerificationTokenType } from '~/modules/User/Domain/VerificationToken.ts'
+import { VerificationToken } from '~/modules/User/Domain/VerificationToken.ts'
 import {
   PrismaVerificationTokenModelTranslator
 } from '~/modules/User/Infrastructure/PrismaVerificationTokenModelTranslator.ts'
+import { VerificationTokenTypes } from '~/modules/Shared/Domain/ValueObject/VerificationTokenType.ts'
 
 export class MysqlUserRepository implements UserRepositoryInterface {
   /**
@@ -33,11 +34,10 @@ export class MysqlUserRepository implements UserRepositoryInterface {
    * @param username User's username
    * @return true if found or false
    */
-  public async existsByUsername (username: User['username']): Promise<boolean> {
+  public async existsByUsername (username: string): Promise<boolean> {
     const user = await prisma.user.findFirst({
       where: {
         username,
-        deletedAt: null,
       },
     })
 
@@ -49,11 +49,10 @@ export class MysqlUserRepository implements UserRepositoryInterface {
    * @param email User's email
    * @return true if found or false
    */
-  public async existsByEmail (email: User['email']): Promise<boolean> {
+  public async existsByEmail (email: string): Promise<boolean> {
     const user = await prisma.user.findFirst({
       where: {
         email,
-        deletedAt: null,
       },
     })
 
@@ -69,7 +68,7 @@ export class MysqlUserRepository implements UserRepositoryInterface {
     const token = await prisma.verificationToken.findFirst({
       where: {
         email,
-        type: VerificationTokenType.CREATE_ACCOUNT,
+        type: VerificationTokenTypes.CREATE_ACCOUNT,
       },
       orderBy: {
         createdAt: 'desc',

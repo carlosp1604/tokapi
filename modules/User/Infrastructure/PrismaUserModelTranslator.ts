@@ -1,5 +1,10 @@
 import { User } from '~/modules/User/Domain/User.ts'
 import { User as PrismaUserModel } from '@prisma/client'
+import { UserRole } from '~/modules/Shared/Domain/ValueObject/UserRole.ts'
+import { Name } from '~/modules/Shared/Domain/ValueObject/Name.ts'
+import { Description } from '~/modules/Shared/Domain/ValueObject/Description.ts'
+import { Username } from '~/modules/Shared/Domain/ValueObject/Username.ts'
+import { Email } from '~/modules/Shared/Domain/ValueObject/Email.ts'
 
 export class PrismaUserModelTranslator {
   public static toDomain (prismaUserModel: PrismaUserModel) {
@@ -11,12 +16,12 @@ export class PrismaUserModelTranslator {
 
     return new User(
       prismaUserModel.id,
-      prismaUserModel.name,
-      prismaUserModel.description,
-      prismaUserModel.username,
-      prismaUserModel.email,
+      Name.from(prismaUserModel.name),
+      prismaUserModel.description ? Description.from(prismaUserModel.description) : null,
+      Username.from(prismaUserModel.username),
+      Email.from(prismaUserModel.email),
       prismaUserModel.imageUrl,
-      prismaUserModel.role,
+      UserRole.from(prismaUserModel.role),
       Number(prismaUserModel.viewsCount),
       Number(prismaUserModel.following),
       Number(prismaUserModel.followers),
@@ -37,7 +42,7 @@ export class PrismaUserModelTranslator {
       name: domain.name,
       description: domain.description,
       username: domain.username,
-      email: domain.username,
+      email: domain.email,
       imageUrl: domain.imageUrl,
       role: domain.role,
       viewsCount: BigInt(domain.viewsCount),

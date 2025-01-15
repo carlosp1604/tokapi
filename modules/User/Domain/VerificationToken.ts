@@ -1,17 +1,16 @@
-import { VerificationTokenDomainException } from '~/modules/User/Domain/VerificationTokenDomainException.ts'
 import { Result } from '~/modules/Shared/Domain/Result.ts'
 import { VerificationTokenDomainError } from '~/modules/User/Domain/VerificationTokenDomainError.ts'
-
-export enum VerificationTokenType {
-  CREATE_ACCOUNT = 'create_account',
-  CHANGE_PASSWORD = 'change_password',
-}
+import { Email } from '~/modules/Shared/Domain/ValueObject/Email.ts'
+import {
+  VerificationTokenType,
+  VerificationTokenTypes
+} from '~/modules/Shared/Domain/ValueObject/VerificationTokenType.ts'
 
 export class VerificationToken {
   public readonly id: string
   public readonly token: string
-  public readonly email: string
-  public readonly type: VerificationTokenType
+  public readonly email: Email
+  public readonly _type: VerificationTokenType
   public readonly expiresAt: Date
   public readonly createdAt: Date
   private _updatedAt: Date
@@ -20,8 +19,8 @@ export class VerificationToken {
   public constructor (
     id: string,
     token: string,
-    email: string,
-    type: string,
+    email: Email,
+    type: VerificationTokenType,
     expiresAt: Date,
     createdAt: Date,
     updatedAt: Date,
@@ -30,11 +29,15 @@ export class VerificationToken {
     this.id = id
     this.token = token
     this.email = email
-    this.type = this.validateTokenType(type)
+    this._type = type
     this.expiresAt = expiresAt
     this.createdAt = createdAt
     this._updatedAt = updatedAt
     this._usedAt = usedAt
+  }
+
+  get type (): string {
+    return this._type.type
   }
 
   get updatedAt (): Date {
@@ -45,46 +48,37 @@ export class VerificationToken {
     return this._usedAt
   }
 
-  public markAsUsed (): void {
+  private markAsUsed (): void {
     const nowDate = new Date()
 
     this._usedAt = nowDate
     this._updatedAt = nowDate
   }
 
-  private validateTokenType (tokenType: string): VerificationTokenType {
-    if (!Object.values(VerificationTokenType).find(value => tokenType === value)) {
-      throw VerificationTokenDomainException.invalidTokenType(tokenType)
-    }
-
-    return tokenType as VerificationTokenType
-  }
-
-  public static validateVerificationTokenForCreateAccount (
-    verificationToken: VerificationToken,
-    token: string
-  ): Result<VerificationToken, VerificationTokenDomainError> {
-    if (verificationToken.type !== VerificationTokenType.CREATE_ACCOUNT) {
+  public useTokenFor (token: string, operation: VerificationTokenTypes): Result<void, VerificationTokenDomainError> {
+    if (this.type !== operation) {
       return {
         success: false,
-        error: VerificationTokenDomainError.tokenNotValidForOperation(VerificationTokenType.CREATE_ACCOUNT),
+        error: VerificationTokenDomainError.tokenNotValidForOperation(operation),
       }
     }
 
-    if (verificationToken._usedAt !== null) {
+    if (this._usedAt !== null) {
       return { success: false, error: VerificationTokenDomainError.tokenAlreadyUsed() }
     }
 
     const nowDate = new Date()
 
-    if (verificationToken.expiresAt <= nowDate) {
+    if (this.expiresAt <= nowDate) {
       return { success: false, error: VerificationTokenDomainError.tokenHasExpired() }
     }
 
-    if (verificationToken.token !== token) {
+    if (this.token !== token) {
       return { success: false, error: VerificationTokenDomainError.tokenDoesNotMatch(token) }
     }
 
-    return { success: true, value: verificationToken }
+    this.markAsUsed()
+
+    return { success: true, value: undefined }
   }
 }

@@ -1,13 +1,26 @@
-import { User } from '~/modules/User/Domain/User.ts'
 import { ApplicationError } from '~/modules/Error/Application/ApplicationError.ts'
 
-export class CreateUserApplicationError extends ApplicationError {
-  public static usernameAndEmailAlreadyRegisteredId = 'create_user_username_and_email_already_registered'
+export enum ErrorType {
+  VALIDATION = 'validation',
+  NOT_FOUND = 'not-found',
+  DUPLICATED = 'duplicated',
+  UNEXPECTED_ERROR = 'unexpected-error'
+}
+
+export class CreateUserApplicationError {
+  // eslint-disable-next-line no-useless-constructor
+  constructor (
+    public readonly type: ErrorType,
+    public readonly errors: CreateUserError[]
+  ) {}
+}
+
+export class CreateUserError extends ApplicationError {
   public static usernameAlreadyRegisteredId = 'create_user_username_already_registered'
   public static emailAlreadyRegisteredId = 'create_user_email_already_registered'
   public static invalidTokenId = 'create_user_invalid_token'
-  public static invalidUsernameAndEmailId = 'create_user_invalid_username_and_email'
   public static invalidUsernameId = 'create_user_invalid_username'
+  public static invalidNameId = 'create_user_invalid_name'
   public static invalidEmailId = 'create_user_invalid_email'
   public static invalidPasswordId = 'create_user_invalid_password'
   public static cannotCreateUserId = 'create_user_cannot_create_user'
@@ -17,70 +30,57 @@ export class CreateUserApplicationError extends ApplicationError {
     super(id, message)
   }
 
-  public static usernameAndEmailAlreadyRegistered (
-    username: User['username'],
-    email: User['email']
-  ): CreateUserApplicationError {
-    return new CreateUserApplicationError(
-      `Username ${username} and email ${email} are already in use`,
-      this.usernameAndEmailAlreadyRegisteredId
-    )
-  }
-
-  public static usernameAlreadyRegistered (username: User['username']): CreateUserApplicationError {
-    return new CreateUserApplicationError(
+  public static usernameAlreadyRegistered (username: string): CreateUserError {
+    return new CreateUserError(
       `Username ${username} is already in use`,
       this.usernameAlreadyRegisteredId
     )
   }
 
-  public static emailAlreadyRegistered (email: User['email']): CreateUserApplicationError {
-    return new CreateUserApplicationError(
+  public static emailAlreadyRegistered (email: string): CreateUserError {
+    return new CreateUserError(
       `Email ${email} is already in use`,
       this.emailAlreadyRegisteredId
     )
   }
 
-  public static invalidToken (): CreateUserApplicationError {
-    return new CreateUserApplicationError(
+  public static invalidToken (): CreateUserError {
+    return new CreateUserError(
       'Token is not valid',
       this.invalidTokenId
     )
   }
 
-  public static invalidUsernameAndEmail (
-    username: User['username'],
-    email: User['email']
-  ): CreateUserApplicationError {
-    return new CreateUserApplicationError(
-      `Username ${username} and email ${email} are not valid`,
-      this.invalidUsernameAndEmailId
-    )
-  }
-
-  public static invalidUsername (username: User['username']): CreateUserApplicationError {
-    return new CreateUserApplicationError(
+  public static invalidUsername (username: string): CreateUserError {
+    return new CreateUserError(
       `Username ${username} is not valid`,
       this.invalidUsernameId
     )
   }
 
-  public static invalidEmail (email: User['email']): CreateUserApplicationError {
-    return new CreateUserApplicationError(
+  public static invalidEmail (email: string): CreateUserError {
+    return new CreateUserError(
       `Email ${email} is not valid`,
       this.invalidEmailId
     )
   }
 
-  public static invalidPassword (password: User['password']): CreateUserApplicationError {
-    return new CreateUserApplicationError(
+  public static invalidPassword (password: string): CreateUserError {
+    return new CreateUserError(
       `Password ${password} is not valid`,
       this.invalidPasswordId
     )
   }
 
-  public static cannotCreateUser (): CreateUserApplicationError {
-    return new CreateUserApplicationError(
+  public static invalidName (name: string): CreateUserError {
+    return new CreateUserError(
+      `Name ${name} is not valid`,
+      this.invalidNameId
+    )
+  }
+
+  public static cannotCreateUser (): CreateUserError {
+    return new CreateUserError(
       'Cannot create user',
       this.cannotCreateUserId
     )

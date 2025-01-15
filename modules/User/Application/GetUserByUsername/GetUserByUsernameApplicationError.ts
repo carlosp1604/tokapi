@@ -1,4 +1,3 @@
-import { User } from '~/modules/User/Domain/User.ts'
 import { ApplicationError } from '~/modules/Error/Application/ApplicationError.ts'
 
 export class GetUserByUsernameApplicationError extends ApplicationError {
@@ -10,14 +9,14 @@ export class GetUserByUsernameApplicationError extends ApplicationError {
     super(id, message)
   }
 
-  public static userNotFound (username: User['username']): GetUserByUsernameApplicationError {
+  public static userNotFound (username: string): GetUserByUsernameApplicationError {
     return new GetUserByUsernameApplicationError(
       `User with username ${username} not found`,
       this.userNotFoundId
     )
   }
 
-  public static invalidUsername (username: User['username']): GetUserByUsernameApplicationError {
+  public static invalidUsername (username: string): GetUserByUsernameApplicationError {
     return new GetUserByUsernameApplicationError(
       `Username ${username} is not valid`,
       this.invalidUsernameId
