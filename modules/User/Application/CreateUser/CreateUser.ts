@@ -73,7 +73,7 @@ export class CreateUser {
 
       return { success: true, value: undefined }
     } catch (exception: unknown) {
-      console.log(exception)
+      console.error(exception)
 
       return {
         success: false,

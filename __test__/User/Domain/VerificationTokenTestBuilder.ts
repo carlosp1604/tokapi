@@ -1,6 +1,6 @@
 import { Email } from '~/modules/Shared/Domain/ValueObject/Email.ts'
 import {
-  VerificationTokenType
+  VerificationTokenType, VerificationTokenTypes
 } from '~/modules/Shared/Domain/ValueObject/VerificationTokenType.ts'
 import { VerificationToken } from '~/modules/User/Domain/VerificationToken.ts'
 
@@ -8,7 +8,7 @@ export class VerificationTokenTestBuilder {
   private id = 'test-id'
   private token = 'test-token'
   private email = Email.from('example@email.com')
-  private type = VerificationTokenType.from('create-account')
+  private type = VerificationTokenType.from(VerificationTokenTypes.CREATE_ACCOUNT)
   private expiresAt = new Date()
   private createdAt = new Date()
   private updatedAt = new Date()

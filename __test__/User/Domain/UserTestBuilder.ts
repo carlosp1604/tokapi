@@ -1,7 +1,7 @@
 import { Name } from '~/modules/Shared/Domain/ValueObject/Name.ts'
 import { Username } from '~/modules/Shared/Domain/ValueObject/Username.ts'
 import { Email } from '~/modules/Shared/Domain/ValueObject/Email.ts'
-import { UserRole } from '~/modules/Shared/Domain/ValueObject/UserRole.ts'
+import { UserRole, UserRoles } from '~/modules/Shared/Domain/ValueObject/UserRole.ts'
 import { Description } from '~/modules/Shared/Domain/ValueObject/Description.ts'
 import { User } from '~/modules/User/Domain/User.ts'
 
@@ -12,7 +12,7 @@ export class UserTestBuilder {
   private username = Username.from('test_username')
   private email = Email.from('example@email.com')
   private imageUrl: string | null = null
-  private role = UserRole.from('user')
+  private role = UserRole.from(UserRoles.USER)
   private viewsCount = 0
   private following = 0
   private followers = 0

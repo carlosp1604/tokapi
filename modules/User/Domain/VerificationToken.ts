@@ -63,7 +63,7 @@ export class VerificationToken {
       }
     }
 
-    if (this._usedAt !== null) {
+    if (this.usedAt !== null) {
       return { success: false, error: VerificationTokenDomainError.tokenAlreadyUsed() }
     }
 
