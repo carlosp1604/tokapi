@@ -1,6 +1,6 @@
 import { ApplicationError } from '~/modules/Error/Application/ApplicationError.ts'
 
-export enum ErrorType {
+export enum CreateUserApplicationErrorType {
   VALIDATION = 'validation',
   NOT_FOUND = 'not-found',
   DUPLICATED = 'duplicated',
@@ -10,7 +10,7 @@ export enum ErrorType {
 export class CreateUserApplicationError {
   // eslint-disable-next-line no-useless-constructor
   constructor (
-    public readonly type: ErrorType,
+    public readonly type: CreateUserApplicationErrorType,
     public readonly errors: CreateUserError[]
   ) {}
 }

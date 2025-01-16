@@ -10,7 +10,7 @@ import { VerificationToken } from '~/modules/User/Domain/VerificationToken.ts'
 import { VerificationTokenTypes } from '~/modules/Shared/Domain/ValueObject/VerificationTokenType.ts'
 import {
   CreateUserApplicationError, CreateUserError,
-  ErrorType
+  CreateUserApplicationErrorType
 } from '~/modules/User/Application/CreateUser/CreateUserApplicationError.ts'
 import { VerificationTokenDomainError } from '~/modules/User/Domain/VerificationTokenDomainError.ts'
 import { UserDomainError } from '~/modules/User/Domain/UserDomainError.ts'
@@ -105,7 +105,7 @@ describe('CreateUser', () => {
       expect(result).toEqual({
         success: false,
         error: new CreateUserApplicationError(
-          ErrorType.DUPLICATED,
+          CreateUserApplicationErrorType.DUPLICATED,
           [CreateUserError.emailAlreadyRegistered('example@email.com')]),
       })
     })
@@ -125,7 +125,7 @@ describe('CreateUser', () => {
       expect(result).toEqual({
         success: false,
         error: new CreateUserApplicationError(
-          ErrorType.DUPLICATED,
+          CreateUserApplicationErrorType.DUPLICATED,
           [CreateUserError.usernameAlreadyRegistered('test_username')]),
       })
     })
@@ -145,7 +145,7 @@ describe('CreateUser', () => {
       expect(result).toEqual({
         success: false,
         error: new CreateUserApplicationError(
-          ErrorType.DUPLICATED,
+          CreateUserApplicationErrorType.DUPLICATED,
           [
             CreateUserError.usernameAlreadyRegistered('test_username'),
             CreateUserError.emailAlreadyRegistered('example@email.com')]),
@@ -168,7 +168,7 @@ describe('CreateUser', () => {
       expect(result).toEqual({
         success: false,
         error: new CreateUserApplicationError(
-          ErrorType.NOT_FOUND,
+          CreateUserApplicationErrorType.NOT_FOUND,
           [CreateUserError.invalidToken()]),
       })
     })
@@ -192,7 +192,7 @@ describe('CreateUser', () => {
       expect(result).toEqual({
         success: false,
         error: new CreateUserApplicationError(
-          ErrorType.NOT_FOUND,
+          CreateUserApplicationErrorType.NOT_FOUND,
           [CreateUserError.invalidToken()]),
       })
     })
@@ -224,7 +224,7 @@ describe('CreateUser', () => {
         expect(result).toEqual({
           success: false,
           error: new CreateUserApplicationError(
-            ErrorType.VALIDATION,
+            CreateUserApplicationErrorType.VALIDATION,
             [CreateUserError.invalidName('Test Name')]),
         })
       })
@@ -244,7 +244,7 @@ describe('CreateUser', () => {
         expect(result).toEqual({
           success: false,
           error: new CreateUserApplicationError(
-            ErrorType.VALIDATION,
+            CreateUserApplicationErrorType.VALIDATION,
             [CreateUserError.invalidUsername('test_username')]),
         })
       })
@@ -264,7 +264,7 @@ describe('CreateUser', () => {
         expect(result).toEqual({
           success: false,
           error: new CreateUserApplicationError(
-            ErrorType.VALIDATION,
+            CreateUserApplicationErrorType.VALIDATION,
             [CreateUserError.invalidEmail('example@email.com')]),
         })
       })
@@ -284,7 +284,7 @@ describe('CreateUser', () => {
         expect(result).toEqual({
           success: false,
           error: new CreateUserApplicationError(
-            ErrorType.VALIDATION,
+            CreateUserApplicationErrorType.VALIDATION,
             [CreateUserError.invalidPassword('test_password')]),
         })
       })
@@ -313,7 +313,7 @@ describe('CreateUser', () => {
       expect(result).toEqual({
         success: false,
         error: new CreateUserApplicationError(
-          ErrorType.UNEXPECTED_ERROR,
+          CreateUserApplicationErrorType.UNEXPECTED_ERROR,
           [CreateUserError.cannotCreateUser()]),
       })
     })

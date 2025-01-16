@@ -12,7 +12,7 @@ import {
 import { CreateUser } from '~/modules/User/Application/CreateUser/CreateUser.ts'
 import {
   CreateUserApplicationError, CreateUserError,
-  ErrorType
+  CreateUserApplicationErrorType
 } from '~/modules/User/Application/CreateUser/CreateUserApplicationError.ts'
 import { validationResult } from 'express-validator'
 
@@ -39,7 +39,7 @@ export class CreateUserController {
   }
 
   private handleErrors (error: CreateUserApplicationError, response: Response) {
-    if (error.type === ErrorType.VALIDATION) {
+    if (error.type === CreateUserApplicationErrorType.VALIDATION) {
       const errors = []
 
       for (const createUserError of error.errors) {
@@ -66,7 +66,7 @@ export class CreateUserController {
       })
     }
 
-    if (error.type === ErrorType.DUPLICATED) {
+    if (error.type === CreateUserApplicationErrorType.DUPLICATED) {
       const errors = []
 
       for (const createUserError of error.errors) {
@@ -85,7 +85,7 @@ export class CreateUserController {
       })
     }
 
-    if (error.type === ErrorType.NOT_FOUND) {
+    if (error.type === CreateUserApplicationErrorType.NOT_FOUND) {
       return response.status(404).send({
         code: TOKEN_NOT_FOUND,
         message: error.errors[0].message,
