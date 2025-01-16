@@ -3,6 +3,7 @@ import { GetUserByUsername } from '~/modules/User/Application/GetUserByUsername/
 import { BCryptCryptoService } from '~/modules/Shared/Infrastructure/BCryptCryptoService.ts'
 import { MysqlUserRepository } from '~/modules/User/Infrastructure/MysqlUserRepository.ts'
 import { asClass, createContainer, InjectionMode } from 'awilix'
+import { LoginUser } from '~/modules/User/Application/LoginUser/LoginUser.ts'
 
 /**
  * We create a container to register our classes dependencies
@@ -18,5 +19,6 @@ container.register('userRepository', asClass(MysqlUserRepository))
 container.register('cryptoService', asClass(BCryptCryptoService))
 container.register('createUser', asClass(CreateUser))
 container.register('getUserByUsername', asClass(GetUserByUsername))
+container.register('loginUser', asClass(LoginUser))
 
 export { container }

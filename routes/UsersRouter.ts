@@ -4,6 +4,7 @@ import { check, param } from 'express-validator'
 import { GetUserByUsernameController } from '~/modules/User/Application/GetUserByUsername/GetUserByUsernameController.ts'
 import { CreateUserController } from '~/modules/User/Application/CreateUser/CreateUserController.ts'
 import bodyParser from 'body-parser'
+import { LoginUserController } from '~/modules/User/Application/LoginUser/LoginUserController.ts'
 
 const usersRouter = express.Router()
 const jsonParser = bodyParser.json()
@@ -17,6 +18,11 @@ const createUserValidate = [
   check('token').notEmpty(),
 ]
 
+const loginUserValidate = [
+  check('identifier').notEmpty(),
+  check('password').notEmpty(),
+]
+
 usersRouter.get(
   '/:username',
   param('username').exists().isString().notEmpty(),
@@ -27,5 +33,11 @@ usersRouter.post(
   jsonParser,
   createUserValidate,
   async (req: express.Request, res: express.Response) => { await (new CreateUserController().create(req, res)) })
+
+usersRouter.post(
+  '/auth/login',
+  jsonParser,
+  loginUserValidate,
+  async (req: express.Request, res: express.Response) => { await (new LoginUserController().create(req, res)) })
 
 export default usersRouter

@@ -94,7 +94,7 @@ export class CreateUserController {
 
     return response.status(500).json({
       code: SERVER_ERROR,
-      message: 'Something went wrong while processing request. Try again later',
+      message: 'Something went wrong while processing your request. Try again later',
     })
   }
 }

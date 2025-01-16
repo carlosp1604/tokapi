@@ -49,7 +49,7 @@ export class GetUserByUsernameController {
 
     return response.status(500).send({
       code: SERVER_ERROR,
-      message: 'Something went wrong while processing request',
+      message: 'Something went wrong while processing your request. Try again later',
     })
   }
 }
