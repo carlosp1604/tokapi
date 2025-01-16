@@ -3,8 +3,8 @@ import { validationResult } from 'express-validator'
 import { container } from '~/awilix.container.ts'
 import { GetUserByUsername } from '~/modules/User/Application/GetUserByUsername/GetUserByUsername.ts'
 import {
-  GetUserByUsernameApplicationException
-} from '~/modules/User/Application/GetUserByUsername/GetUserByUsernameApplicationException.ts'
+  GetUserByUsernameApplicationError
+} from '~/modules/User/Application/GetUserByUsername/GetUserByUsernameApplicationError.ts'
 import {
   BAD_REQUEST_USERNAME_REQUIRED,
   INVALID_USERNAME_PARAM, SERVER_ERROR, USER_NOT_FOUND
@@ -32,15 +32,15 @@ export class GetUserByUsernameController {
     return response.status(200).json(getUserResult.value)
   }
 
-  private handleErrors (error: GetUserByUsernameApplicationException, response: Response) {
-    if (error.id === GetUserByUsernameApplicationException.invalidUsernameId) {
+  private handleErrors (error: GetUserByUsernameApplicationError, response: Response) {
+    if (error.id === GetUserByUsernameApplicationError.invalidUsernameId) {
       return response.status(422).send({
         code: INVALID_USERNAME_PARAM,
         message: error.message,
       })
     }
 
-    if (error.id === GetUserByUsernameApplicationException.userNotFoundId) {
+    if (error.id === GetUserByUsernameApplicationError.userNotFoundId) {
       return response.status(404).send({
         code: USER_NOT_FOUND,
         message: error.message,

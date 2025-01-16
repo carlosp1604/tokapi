@@ -2,12 +2,12 @@ import { beforeAll, beforeEach, describe, expect, it, jest } from '@jest/globals
 import { UserRepositoryInterface } from '~/modules/User/Domain/UserRepositoryInterface.ts'
 import { mock, mockReset } from 'jest-mock-extended'
 import { GetUserByUsername } from '~/modules/User/Application/GetUserByUsername/GetUserByUsername.ts'
-import { User } from '~/modules/User/Domain/User.ts'
-import {
-  GetUserByUsernameApplicationException
-} from '~/modules/User/Application/GetUserByUsername/GetUserByUsernameApplicationException.ts'
 import { UsernameValidator } from '~/modules/Shared/Domain/Validator/UsernameValidator.ts'
 import { EmailValidator } from '~/modules/Shared/Domain/Validator/EmailValidator.ts'
+import {
+  GetUserByUsernameApplicationError
+} from '~/modules/User/Application/GetUserByUsername/GetUserByUsernameApplicationError.ts'
+import { UserTestBuilder } from '~/__test__/User/Domain/UserTestBuilder.ts'
 
 jest.mock('~/modules/Shared/Domain/Validator/UsernameValidator.ts')
 jest.mock('~/modules/Shared/Domain/Validator/EmailValidator.ts')
@@ -24,26 +24,10 @@ describe('GetUserByUsername', () => {
   }
 
   const buildUser = () => {
-    return new User(
-      'test-id',
-      'Test Name',
-      'Test Description',
-      'test_username',
-      'test@email.com',
-      null,
-      'User',
-      0,
-      0,
-      0,
-      true,
-      true,
-      true,
-      true,
-      'someHashedPassword',
-      nowDate,
-      nowDate,
-      null
-    )
+    return new UserTestBuilder()
+      .withCreatedAt(nowDate)
+      .withUpdatedAt(nowDate)
+      .build()
   }
 
   beforeAll(() => {
@@ -84,8 +68,8 @@ describe('GetUserByUsername', () => {
           id: 'test-id',
           username: 'test_username',
           name: 'Test Name',
-          description: 'Test Description',
-          email: 'test@email.com',
+          description: null,
+          email: 'example@email.com',
           imageUrl: null,
           following: 0,
           followers: 0,
@@ -94,7 +78,7 @@ describe('GetUserByUsername', () => {
           publicSaved: true,
           publicShared: true,
           publicProfile: true,
-          role: 'User',
+          role: 'user',
           createdAt: nowDate.toISOString(),
           updatedAt: nowDate.toISOString(),
         },
@@ -116,7 +100,7 @@ describe('GetUserByUsername', () => {
 
       expect(response).toStrictEqual({
         success: false,
-        error: GetUserByUsernameApplicationException.invalidUsername('invalid-username'),
+        error: GetUserByUsernameApplicationError.invalidUsername('invalid-username'),
       })
     })
 
@@ -132,7 +116,7 @@ describe('GetUserByUsername', () => {
 
       expect(response).toStrictEqual({
         success: false,
-        error: GetUserByUsernameApplicationException.userNotFound('valid_username'),
+        error: GetUserByUsernameApplicationError.userNotFound('valid_username'),
       })
     })
   })

@@ -1,15 +1,22 @@
-import { EmailValidator } from '~/modules/Shared/Domain/Validator/EmailValidator.ts'
-import { UsernameValidator } from '~/modules/Shared/Domain/Validator/UsernameValidator.ts'
-import { UserDomainException } from '~/modules/User/Domain/UserDomainException.ts'
+import { randomUUID } from 'node:crypto'
+import { PasswordValidator } from '~/modules/Shared/Domain/Validator/PasswordValidator.ts'
+import { CryptoServiceInterface } from '~/modules/Shared/Domain/CryptoServiceInterface.ts'
+import { Result } from '~/modules/Shared/Domain/Result.ts'
+import { UserDomainError } from '~/modules/User/Domain/UserDomainError.ts'
+import { UserRole, UserRoles } from '~/modules/Shared/Domain/ValueObject/UserRole.ts'
+import { Description } from '~/modules/Shared/Domain/ValueObject/Description.ts'
+import { Email } from '~/modules/Shared/Domain/ValueObject/Email.ts'
+import { Name } from '~/modules/Shared/Domain/ValueObject/Name.ts'
+import { Username } from '~/modules/Shared/Domain/ValueObject/Username.ts'
 
 export class User {
   public readonly id: string
-  public readonly name: string
-  public readonly description: string
-  public readonly username: string
-  public readonly email: string
+  private readonly _name: Name
+  private readonly _description: Description | null
+  private readonly _username: Username
+  private readonly _email: Email
   public readonly imageUrl: string | null
-  public readonly role: string
+  private readonly _role: UserRole
   public readonly viewsCount: number
   public readonly following: number
   public readonly followers: number
@@ -17,19 +24,19 @@ export class User {
   public readonly publicSaved: boolean
   public readonly publicShared: boolean
   public readonly publicProfile: boolean
-  private password: string
+  public readonly password: string
   public readonly createdAt: Date
   public readonly updatedAt: Date
   public readonly deletedAt: Date | null
 
   public constructor (
     id: string,
-    name: string,
-    description: string,
-    username: string,
-    email: string,
+    name: Name,
+    description: Description | null,
+    username: Username,
+    email: Email,
     imageUrl: string | null,
-    role: string,
+    role: UserRole,
     viewsCount: number,
     following: number,
     followers: number,
@@ -42,25 +49,14 @@ export class User {
     updatedAt: Date,
     deletedAt: Date | null
   ) {
-    const isEmailValid = (new EmailValidator()).validate(email)
-    const isUsernameValid = (new UsernameValidator()).validate(username)
-
-    if (!isEmailValid) {
-      throw UserDomainException.invalidEmail(email)
-    }
-
-    if (!isUsernameValid) {
-      throw UserDomainException.invalidUsername(username)
-    }
-
     this.id = id
-    this.name = name
-    this.description = description
-    this.email = email
-    this.username = username
+    this._name = name
+    this._description = description
+    this._email = email
+    this._username = username
     this.imageUrl = imageUrl
     this.password = hashedPassword
-    this.role = role
+    this._role = role
     this.viewsCount = viewsCount
     this.following = following
     this.followers = followers
@@ -71,5 +67,101 @@ export class User {
     this.createdAt = createdAt
     this.updatedAt = updatedAt
     this.deletedAt = deletedAt
+  }
+
+  get name (): string {
+    return this._name.name
+  }
+
+  get description (): string | null {
+    if (!this._description) {
+      return null
+    }
+
+    return this._description.description
+  }
+
+  get username (): string {
+    return this._username.username
+  }
+
+  get email (): string {
+    return this._email.email
+  }
+
+  get role (): string {
+    return this._role.role
+  }
+
+  public static async initializeUser (
+    name: string,
+    email: string,
+    username: string,
+    password: string,
+    cryptoService: CryptoServiceInterface
+  ): Promise<Result<User, UserDomainError[]>> {
+    const errors: UserDomainError[] = []
+
+    let nameValueObject: Name | null = null
+    let usernameValueObject: Username | null = null
+    let emailValueObject: Email | null = null
+
+    try {
+      nameValueObject = Name.from(name)
+      // eslint-disable-next-line unused-imports/no-unused-vars
+    } catch (_exception: unknown) {
+      errors.push(UserDomainError.invalidName(name))
+    }
+
+    try {
+      usernameValueObject = Username.from(username)
+      // eslint-disable-next-line unused-imports/no-unused-vars
+    } catch (_exception: unknown) {
+      errors.push(UserDomainError.invalidUsername(username))
+    }
+
+    try {
+      emailValueObject = Email.from(email)
+      // eslint-disable-next-line unused-imports/no-unused-vars
+    } catch (_exception: unknown) {
+      errors.push(UserDomainError.invalidEmail(email))
+    }
+
+    const isPasswordValid = (new PasswordValidator().validate(password))
+
+    if (!isPasswordValid) {
+      errors.push(UserDomainError.invalidPassword(password))
+    }
+
+    if (!nameValueObject || !usernameValueObject || !emailValueObject || !isPasswordValid) {
+      return { success: false, error: errors }
+    }
+
+    const hashedPassword = await cryptoService.hash(password)
+    const userUuid = randomUUID()
+    const nowDate = new Date()
+
+    const user = new User(
+      userUuid,
+      nameValueObject,
+      null,
+      usernameValueObject,
+      emailValueObject,
+      null,
+      UserRole.from(UserRoles.USER),
+      0,
+      0,
+      0,
+      false,
+      false,
+      false,
+      true,
+      hashedPassword,
+      nowDate,
+      nowDate,
+      null
+    )
+
+    return { success: true, value: user }
   }
 }
