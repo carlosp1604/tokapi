@@ -10,6 +10,13 @@ export interface UserRepositoryInterface {
   findByUsername(username: string): Promise<User | null>
 
   /**
+   * Find a User given its email
+   * @param email User's email
+   * @return User if found or null
+   */
+  findByEmail(email: string): Promise<User | null>
+
+  /**
    * Decide whether a User exists given its username
    * @param username User's username
    * @return true if found or false

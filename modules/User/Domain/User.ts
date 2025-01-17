@@ -93,6 +93,10 @@ export class User {
     return this._role.role
   }
 
+  public passwordMatch (clearPassword: string, cryptoService: CryptoServiceInterface): Promise<boolean> {
+    return cryptoService.matchHash(clearPassword, this.password)
+  }
+
   public static async initializeUser (
     name: string,
     email: string,

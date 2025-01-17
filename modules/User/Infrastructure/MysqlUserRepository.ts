@@ -30,6 +30,26 @@ export class MysqlUserRepository implements UserRepositoryInterface {
   }
 
   /**
+   * Find a User given its email
+   * @param email User's email
+   * @return User if found or null
+   */
+  public async findByEmail (email: string): Promise<User | null> {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+        deletedAt: null,
+      },
+    })
+
+    if (!user) {
+      return null
+    }
+
+    return PrismaUserModelTranslator.toDomain(user)
+  }
+
+  /**
    * Decide whether a User exists given its username
    * @param username User's username
    * @return true if found or false
