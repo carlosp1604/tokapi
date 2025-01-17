@@ -32,7 +32,6 @@ export class LoginUserController {
     }
 
     const createAuthTokenUseCase = container.resolve<CreateAuthenticationToken>('createAuthenticationToken')
-
     const createAuthenticationTokenResult = await createAuthTokenUseCase.create(loginUserResult.value)
 
     if (!createAuthenticationTokenResult.success) {
