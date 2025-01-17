@@ -14,6 +14,7 @@
     "npm:@prisma/client@^6.2.1": "6.2.1_prisma@6.2.1",
     "npm:@types/express@^4.17.21": "4.17.21",
     "npm:@types/jest@^29.5.14": "29.5.14",
+    "npm:@types/jsonwebtoken@^9.0.7": "9.0.7",
     "npm:@types/luxon@^3.4.2": "3.4.2",
     "npm:@types/node@*": "22.5.4",
     "npm:@typescript-eslint/eslint-plugin@^8.19.1": "8.19.1_@typescript-eslint+parser@8.19.1__eslint@8.57.1__typescript@5.7.2_eslint@8.57.1_typescript@5.7.2",
@@ -799,6 +800,12 @@
     },
     "@types/json5@0.0.29": {
       "integrity": "sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ=="
+    },
+    "@types/jsonwebtoken@9.0.7": {
+      "integrity": "sha512-ugo316mmTYBl2g81zDFnZ7cfxlut3o+/EQdaP7J8QN2kY6lJ22hmQYCK5EHcJHbrW+dkCGSCPgbG8JtYj6qSrg==",
+      "dependencies": [
+        "@types/node"
+      ]
     },
     "@types/luxon@3.4.2": {
       "integrity": "sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA=="
@@ -4207,6 +4214,7 @@
         "npm:@jest/globals@^29.7.0",
         "npm:@prisma/client@^6.2.1",
         "npm:@types/jest@^29.5.14",
+        "npm:@types/jsonwebtoken@^9.0.7",
         "npm:@types/luxon@^3.4.2",
         "npm:@typescript-eslint/eslint-plugin@^8.19.1",
         "npm:@typescript-eslint/parser@^8.19.1",

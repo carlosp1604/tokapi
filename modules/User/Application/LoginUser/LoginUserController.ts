@@ -8,6 +8,9 @@ import {
 import { LoginUser } from '~/modules/User/Application/LoginUser/LoginUser.ts'
 import { LoginUserApplicationError } from '~/modules/User/Application/LoginUser/LoginUserApplicationError.ts'
 import { validationResult } from 'express-validator'
+import {
+  CreateAuthenticationToken
+} from '~/modules/User/Application/CreateAuthenticationToken/CreateAuthenticationToken.ts'
 
 export class LoginUserController {
   public async create (request: Request, response: Response) {
@@ -21,14 +24,25 @@ export class LoginUserController {
       })
     }
 
-    const useCase = container.resolve<LoginUser>('loginUser')
-    const loginUserResult = await useCase.login(request.body)
+    const loginUseCase = container.resolve<LoginUser>('loginUser')
+    const loginUserResult = await loginUseCase.login(request.body)
 
     if (!loginUserResult.success) {
       return this.handleLoginErrors(loginUserResult.error, response)
     }
 
-    return response.status(200).json(loginUserResult.value)
+    const createAuthTokenUseCase = container.resolve<CreateAuthenticationToken>('createAuthenticationToken')
+
+    const createAuthenticationTokenResult = await createAuthTokenUseCase.create(loginUserResult.value)
+
+    if (!createAuthenticationTokenResult.success) {
+      return response.status(500).json({
+        code: SERVER_ERROR,
+        message: 'Something went wrong while processing your request. Try again later',
+      })
+    }
+
+    return response.status(200).json(createAuthenticationTokenResult.value)
   }
 
   private handleLoginErrors (error: LoginUserApplicationError, response: Response) {
@@ -43,7 +57,7 @@ export class LoginUserController {
       case LoginUserApplicationError.userNotFoundId:
         return response.status(401).json({
           code: UNAUTHORIZED_ACCESS,
-          message: 'Combination identifier/password does not match',
+          message: 'Combination user/password does not match',
         })
 
       default:

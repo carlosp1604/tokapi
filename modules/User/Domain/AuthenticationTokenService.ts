@@ -1,8 +1,8 @@
 export interface AuthenticationTokenService {
   /**
-   * Generate an authentication token given an input value
-   * @param value String value
+   * Generate an authentication token given a payload
+   * @param payload JSON payload
    * @return Authentication Token
    */
-  generate(value: string): Promise<string>
+  generate(payload: JSON): Promise<string>
 }
