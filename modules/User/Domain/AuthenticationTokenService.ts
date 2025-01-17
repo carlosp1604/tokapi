@@ -1,8 +1,10 @@
+export type AuthenticationTokenPayload = object
+
 export interface AuthenticationTokenService {
   /**
    * Generate an authentication token given a payload
-   * @param payload JSON payload
+   * @param payload Payload to sign
    * @return Authentication Token
    */
-  generate(payload: JSON): Promise<string>
+  generate(payload: AuthenticationTokenPayload): Promise<string>
 }

@@ -1,9 +1,15 @@
 import { Result } from '~/modules/Shared/Domain/Result.ts'
-import { AuthenticationTokenService } from '~/modules/User/Domain/AuthenticationTokenService.ts'
+import {
+  AuthenticationTokenPayload,
+  AuthenticationTokenService
+} from '~/modules/User/Domain/AuthenticationTokenService.ts'
 import { UserApplicationDto } from '~/modules/User/Application/Dtos/UserApplicationDto.ts'
 import {
   CreateAuthenticationTokenApplicationResponseDto
 } from '~/modules/User/Application/Dtos/CreateAuthenticationTokenApplicationResponseDto.ts'
+import {
+  CreateAuthenticationTokenApplicationError
+} from '~/modules/User/Application/CreateAuthenticationToken/CreateAuthenticationTokenApplicationError.ts'
 
 export class CreateAuthenticationToken {
   // eslint-disable-next-line no-useless-constructor
@@ -14,15 +20,16 @@ export class CreateAuthenticationToken {
 
   public async create (
     userApplicationDto: UserApplicationDto
-  ): Promise<Result<CreateAuthenticationTokenApplicationResponseDto, Error>> {
-    const payload = {
+  ): Promise<Result<CreateAuthenticationTokenApplicationResponseDto, CreateAuthenticationTokenApplicationError>> {
+    const payload: AuthenticationTokenPayload = {
+      id: userApplicationDto.id,
       name: userApplicationDto.name,
       username: userApplicationDto.username,
       role: userApplicationDto.role,
     }
 
     try {
-      const token = await this.authenticationTokenService.generate(JSON.parse(JSON.stringify(payload)))
+      const token = await this.authenticationTokenService.generate(payload)
 
       return {
         success: true,
@@ -38,7 +45,7 @@ export class CreateAuthenticationToken {
 
       return {
         success: false,
-        error: new Error('Aaaaaaaaaaa'),
+        error: CreateAuthenticationTokenApplicationError.cannotGenerateToken(userApplicationDto.id),
       }
     }
   }

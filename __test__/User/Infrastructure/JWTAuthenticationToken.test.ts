@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import { JWTAuthenticationToken } from '~/modules/User/Infrastructure/JWTAuthenticationToken.ts'
 import { randomUUID } from 'node:crypto'
 import { mockReset } from 'jest-mock-extended'
+import { AuthenticationTokenPayload } from '~/modules/User/Domain/AuthenticationTokenService.ts'
 
 jest.mock('node:crypto')
 
@@ -23,7 +24,7 @@ describe('JWTAuthenticationToken', () => {
     mockedRandomUUID.mockReturnValue('expected-random-uuid-for-token')
   })
 
-  const payload: JSON = JSON.parse(JSON.stringify({ name: 'Test Name', id: 'test-id' }))
+  const payload: AuthenticationTokenPayload = { name: 'Test Name', id: 'test-id' }
 
   describe('generate', () => {
     it('should call services correctly', async () => {
