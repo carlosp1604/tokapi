@@ -33,7 +33,10 @@ export class CreateUser {
     const verificationToken = await this.userRepository.findCreateAccountToken(createUserApplicationRequestDto.email)
 
     if (!verificationToken) {
-      return { success: false, error: new CreateUserApplicationError(CreateUserApplicationErrorType.NOT_FOUND, [CreateUserError.invalidToken()]) }
+      return {
+        success: false,
+        error: new CreateUserApplicationError(CreateUserApplicationErrorType.NOT_FOUND, [CreateUserError.invalidToken()]),
+      }
     }
 
     const useTokenResult = verificationToken.useTokenFor(
@@ -43,7 +46,10 @@ export class CreateUser {
 
     if (!useTokenResult.success) {
       // Error obfuscating
-      return { success: false, error: new CreateUserApplicationError(CreateUserApplicationErrorType.NOT_FOUND, [CreateUserError.invalidToken()]) }
+      return {
+        success: false,
+        error: new CreateUserApplicationError(CreateUserApplicationErrorType.NOT_FOUND, [CreateUserError.invalidToken()]),
+      }
     }
 
     const buildUserResult = await User.initializeUser(
@@ -77,7 +83,9 @@ export class CreateUser {
 
       return {
         success: false,
-        error: new CreateUserApplicationError(CreateUserApplicationErrorType.UNEXPECTED_ERROR, [CreateUserError.cannotCreateUser()]),
+        error: new CreateUserApplicationError(CreateUserApplicationErrorType.UNEXPECTED_ERROR,
+          [CreateUserError.cannotCreateUser()]
+        ),
       }
     }
   }

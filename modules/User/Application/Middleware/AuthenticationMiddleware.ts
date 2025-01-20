@@ -23,15 +23,15 @@ export const authenticate = async (request: Request, response: Response, next: N
   const validateTokenResult = await useCase.validate(authenticationToken)
 
   if (!validateTokenResult.success) {
-    return sendUnauthorizedError(validateTokenResult.error, 'Provided JWT Token is not valid. Authentication is required')
+    return sendUnauthorizedError(response, 'Provided JWT Token is not valid. Authentication is required')
   }
-
-  request.token = validateTokenResult.value
+  // eslint-disable-next-line dot-notation
+  request['token'] = validateTokenResult.value
   next()
 }
 
 const sendUnauthorizedError = (response: Response, message: string): void => {
-  return response.status(401).send({
+  response.status(401).json({
     code: UNAUTHORIZED_ACCESS,
     message,
   })
