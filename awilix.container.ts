@@ -8,6 +8,9 @@ import {
   CreateAuthenticationToken
 } from '~/modules/User/Application/CreateAuthenticationToken/CreateAuthenticationToken.ts'
 import { JWTAuthenticationToken } from '~/modules/User/Infrastructure/JWTAuthenticationToken.ts'
+import {
+  ValidateAuthenticationToken
+} from '~/modules/User/Application/ValidateAuthenticationToken/ValidateAuthenticationToken.ts'
 
 /**
  * We create a container to register our classes dependencies
@@ -66,5 +69,6 @@ container.register('createUser', asClass(CreateUser))
 container.register('getUserByUsername', asClass(GetUserByUsername))
 container.register('loginUser', asClass(LoginUser))
 container.register('createAuthenticationToken', asClass(CreateAuthenticationToken))
+container.register('validateAuthenticationToken', asClass(ValidateAuthenticationToken))
 
 export { container }
