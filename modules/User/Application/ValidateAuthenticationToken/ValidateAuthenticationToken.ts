@@ -13,20 +13,10 @@ export class ValidateAuthenticationToken {
   constructor (private readonly authenticationTokenService: AuthenticationTokenService) {}
 
   public async validate (
-    token: string
+    authenticationToken: string
   ): Promise<Result<AuthenticationTokenApplicationDto, ValidateAuthenticationTokenApplicationError>> {
-    if (!token.startsWith('Bearer ')) {
-      return { success: false, error: ValidateAuthenticationTokenApplicationError.invalidTokenType() }
-    }
-
-    const authorizationToken = token.substring(7, token.length)
-
-    if (!authorizationToken) {
-      return { success: false, error: ValidateAuthenticationTokenApplicationError.invalidToken() }
-    }
-
     try {
-      const token = await this.authenticationTokenService.verify(authorizationToken)
+      const token = await this.authenticationTokenService.verify(authenticationToken)
 
       return {
         success: true,
